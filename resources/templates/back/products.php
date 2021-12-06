@@ -7,7 +7,6 @@
 <table class="table table-hover">
 
     <thead>
-
       <tr>
            <th>Id</th>
            <th>Title</th>
@@ -20,5 +19,5 @@
       
       <?php get_products_in_admin(); ?>
 
-  </tbody>
+    </tbody>
 </table>
