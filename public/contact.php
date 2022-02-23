@@ -14,8 +14,8 @@
                 </div>
             </div>
             <div class="row center-block">
-                <div class="col-lg-12">
-                    <form name="sentMessage" id="contactForm" method="post">
+                <div class="col-lg-12 center-block">
+                    <form  class="center-block" name="sentMessage" id="contactForm" method="post">
 
                         <?php contact(); ?>
 
@@ -47,7 +47,7 @@
                             <div class="clearfix"></div>
                             <div class="col-lg-12 text-center">
                                 <div id="success"></div>
-                                <button name="submit" type="submit" class="btn btn-primary">Send Message</button>
+                                <button name="submit" type="submit" class="btn btn-primary">Enviar</button>
                             </div>
                         </div>
                     </form>

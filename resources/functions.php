@@ -92,6 +92,14 @@ function get_products()
     }
 }
 
+function count_all_records($table){
+    return mysqli_num_rows(query('SELECT * FROM ' .$table));
+}
+
+// function count_all_products_in_stock(){
+//     return mysqli_num_rows(query('SELECT * FROM products WHERE product_quantity >= 1'));
+// }
+
 function get_categories() 
 {
     $query = query("SELECT * FROM categories");
@@ -389,5 +397,237 @@ function update_product() {
     }
 }
 
+/*****Categories in Admin****/
+
+
+function show_categories_in_admin() {
+
+    $category_query = query("SELECT * FROM categories");
+    confirm($category_query);
+
+    while($row = fetch_array($category_query)) {
+
+        $cat_id = $row['cat_id'];
+        $cat_title = $row['cat_title'];
+
+        $category = <<<DELIMETER
+            <tr>
+                <td>{$cat_id}</td>
+                <td>{$cat_title}</td>
+                <td><a class="btn btn-danger" href="./index.php?delete_category_id={$row['cat_id']}"><span class="glyphicon glyphicon-remove"></span></a></td>
+            </tr>
+        DELIMETER;
+
+        echo $category;
+    }
+}
+
+function add_category() {
+
+    if(isset($_POST['add_category'])) {
+        $cat_title = escape_string($_POST['cat_title']);
+
+        if(empty($cat_title) || $cat_title == " ") {
+            echo "<p class='bg-danger'>THIS CANNOT BE EMPTY</p>";
+
+        } else {
+            $insert_cat = query("INSERT INTO categories(cat_title) VALUES('{$cat_title}') ");
+            confirm($insert_cat);
+            set_message("Category Created");
+        }
+    }
+}
+
+ /************************admin users***********************/
+
+function display_users() {
+
+    $category_query = query("SELECT * FROM users");
+    confirm($category_query);
+
+    while($row = fetch_array($category_query)) {
+
+        $user_id = $row['user_id'];
+        $username = $row['username'];
+        $email = $row['email'];
+        $password = $row['password'];
+
+        $user = <<<DELIMETER
+
+            <tr>
+                <td>{$user_id}</td>
+                <td>{$username}</td>
+                <td>{$email}</td>
+                <td><a class="btn btn-danger" href="index.php?delete_user_id={$row['user_id']}"><span class="glyphicon glyphicon-remove"></span></a></td>
+            </tr>
+
+        DELIMETER;
+
+        echo $user;
+    }
+}
+
+function add_user() {
+
+    if(isset($_POST['add_user'])) {
+
+        $username   = escape_string($_POST['username']);
+        $email      = escape_string($_POST['email']);
+        $password   = escape_string($_POST['password']);
+        // $user_photo = escape_string($_FILES['file']['name']);
+        // $photo_temp = escape_string($_FILES['file']['tmp_name']);
+
+        // move_uploaded_file($photo_temp, UPLOAD_DIRECTORY . DS . $user_photo);
+
+        $query = query("INSERT INTO users(username,email,password) VALUES('{$username}','{$email}','{$password}')");
+        confirm($query);
+
+        set_message("USER CREATED");
+
+        redirect("index.php?users");
+    }
+}
+
+function get_reports(){
+
+    $query = query(" SELECT * FROM reports");
+    confirm($query);
+
+    while($row = fetch_array($query)) {
+
+        $report = <<<DELIMETER
+
+                <tr>
+                    <td>{$row['report_id']}</td>
+                    <td>{$row['product_id']}</td>
+                    <td>{$row['order_id']}</td>
+                    <td>{$row['product_price']}</td>
+                    <td>{$row['product_title']}
+                    <td>{$row['product_quantity']}</td>
+                    <td><a class="btn btn-danger" href="./index.php?delete_report_id={$row['report_id']}"><span class="glyphicon glyphicon-remove"></span></a></td>
+                </tr>
+
+        DELIMETER;
+
+        echo $report;
+    }
+}
+
+/***** SLIDES ***/
+
+function add_slides(){
+
+    if(isset($_POST['add_slide'])) {
+
+        $slide_title        = escape_string($_POST['slide_title']);
+        $slide_image        = escape_string($_FILES['file']['name']);
+        $slide_image_loc    = escape_string($_FILES['file']['tmp_name']);
+
+        if(empty($slide_title) || empty($slide_image)) {
+
+            echo "<p class='bg-danger'>This field cannot be empty</p>";
+
+        } else {
+
+            move_uploaded_file($slide_image_loc, UPLOAD_DIRECTORY . DS . $slide_image);
+
+            $query = query("INSERT INTO slides(slide_title, slide_image) VALUES('{$slide_title}', '{$slide_image}')");
+            confirm($query);
+            set_message("Slide Added");
+            redirect("index.php?slides");
+        }
+    }
+}
+
+
+function get_current_slide_in_admin(){
+
+    $query = query("SELECT * FROM slides ORDER BY slide_id DESC LIMIT 1");
+    confirm($query);
+
+    while($row = fetch_array($query)) {
+
+        $slide_image = display_image($row['slide_image']);
+
+        $slide_active_admin = <<<DELIMETER
+
+            <img class="img-responsive" src="../../resources/{$slide_image}" alt="$slide_image">
+
+        DELIMETER;
+
+        echo $slide_active_admin;
+    }
+}
+
+
+function get_active_slide(){
+
+    $query = query("SELECT * FROM slides ORDER BY slide_id DESC LIMIT 1");
+
+    confirm($query);
+
+    while($row = fetch_array($query)) {
+
+        $slide_image = display_image($row['slide_image']);
+
+        $slide_active = <<<DELIMETER
+
+            <div class="item active">
+                <img style="height: 450px"  class="slide-image" src="../resources/{$slide_image}" alt="$slide_image">
+            </div>
+
+        DELIMETER;
+
+        echo $slide_active;
+    }
+}
+
+function get_slides(){
+
+    $query = query("SELECT * FROM slides");
+    confirm($query);
+
+    while($row = fetch_array($query)) {
+
+        $slide_image = display_image($row['slide_image']);
+
+        $slides = <<<DELIMETER
+        <div class="item">
+            <img style="height: 450px"  class="slide-image" src="../resources/{$slide_image}" alt="$slide_image">
+        </div>
+        DELIMETER;
+
+        echo $slides;
+    }
+}
+
+function get_slide_thumbnails(){
+
+    $query = query("SELECT * FROM slides ORDER BY slide_id ASC ");
+    confirm($query);
+
+    while($row = fetch_array($query)) {
+
+        $slide_image = display_image($row['slide_image']);
+
+        $slide_thumb_admin = <<<DELIMETER
+
+            <div class="col-xs-6 col-md-3 image_container">
+                
+                <a href="index.php?delete_slide_id={$row['slide_id']}">
+                    
+                    <img  class="img-responsive slide_image" src="../../resources/{$slide_image}" alt="$slide_image"></a>
+
+                <div class="caption">
+                <p>{$row['slide_title']}</p>
+                </div>
+
+            </div>
+
+        DELIMETER;
+
+        echo $slide_thumb_admin;
+    }
+}
 
 ?>

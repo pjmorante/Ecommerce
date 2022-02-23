@@ -6,7 +6,10 @@
         <footer>
             <div class="row">
                 <div class="col-lg-12">
-                    <p>Copyright &copy; Your Website 2030</p>
+                    <p>Todos los derechos reservados &copy;Beauty 2022</p>
+                </div>
+                <div class="col-lg-12">
+                    <i class="fa-brands fa-facebook">Facebook</i>
                 </div>
             </div>
         </footer>
